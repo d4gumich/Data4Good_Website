@@ -30,6 +30,9 @@ To create a new stage, click the `Create` button when you have one of the stages
 
 When we get to a place where testing of the endpoints and API is required, we can export the stage under the `Export` tab. Under this you will have a few options, but I would recommend to export as `Swagger + Postman Extensions` This will allow testing through Postman (an API GUI that will be much cleaner and simpler to use than testing within AWS).
 
+
+# Creating from Scratch. **The above was a special case for the contact us page
+**
 ## Adding a Method
 
 To add a method to a stage, navigate to the left tabs and select `Resources`. Once there you will have access to creating an endpoint and a the various resources to each.
@@ -51,3 +54,29 @@ In Figure 1, you see how there are multiple triggers than can kick off a lambda 
 <img width="1160" alt="screen shot 2019-01-15 at 2 36 05 pm" src="https://user-images.githubusercontent.com/20977403/51204998-f25eab00-18d2-11e9-9dd0-37d87906c1bc.png">
 
 Shown above are the settings of the API Gateway in the lamdba function. Once here, you can remove methods that were imported that you no longer need. If a new method/resource is added in then you will need to follow the steps above again and import the API once more as a trigger.
+
+## Creating A New Resource
+
+A resource is a new endpoint within the main API. The basic layout is `baseURL/<resource>` much like what we've seen when interacting with the Twitter, Flickr, or Reddit APIs. To create a new resource, first you will want to navigate to the API Gateway within the AWS Console. Next you will select the main API we use (in this case the `emailfwd-API`) and click on `Resources` on the left sidebar. After this, make sure you have the top `/` highlighted before clicking on the `Actions` button and selecting `Create Resource`. This will create the resource as a child under the baseURL shown below.
+
+![createresource0](https://user-images.githubusercontent.com/20977403/53697247-94602700-3d9d-11e9-9294-02bba4bf2e2c.png)
+
+Next you will give your resource a name and then click `Finish`. 
+
+![ccreateresource1](https://user-images.githubusercontent.com/20977403/53697335-5adbeb80-3d9e-11e9-9bdc-6eff69d82b5b.png)
+
+## Adding a Method
+
+Now that we have the new Resource created, we are going to add a new method to the new resource. In this case we are going to add a `GET` since the main purpose of this function is to retrieve and send back data to the webpage. First you want to highlight the resource. Next, click on `Actions` and select `Create Method` (shown below)
+![createmethod0](https://user-images.githubusercontent.com/20977403/53697341-64655380-3d9e-11e9-9d14-71619d7c54c6.png)
+
+After you have the method added, navigate to the drop down selection and select which type of method you intend to create. Like I stated above, I created a `GET` as the purpose was to retrieve data. There are a host of different ones such as `POST`, `PUT`, `ANY`, etc. These all follow the traditional methods for APIs. After selecting `GET` we now need to configure the method. In this case we want to hook up the trigger to the lambda function for pulling data. Because of this, I have selected `Lambda Function` and searched for the one I want to add to it. This automatically adds the trigger to the lambda function. 
+
+![createmethod1](https://user-images.githubusercontent.com/20977403/53697429-f0777b00-3d9e-11e9-94d2-880d1fac33ba.png)
+
+## Deployment
+Now that we have the new Resource created with the methods for our purpose, we can deploy the API. Navigate to the `Actions` button and select `Deploy API`. 
+![deployapi](https://user-images.githubusercontent.com/20977403/53697442-2288dd00-3d9f-11e9-8650-05a23b2125df.png)
+
+At this point you will be asked which stage you want to deploy it to. For our purposes, we have `default` set up as the production enviornment since we don't require a test/beta stage at this point. 
+You can now test if the endpoint works as intended by navigating to the `Stages` section on the left sidebar. Select the `default` stage, click on the new resource + method combo, then click on the endpoint URL at the top. This URL invokes the function in your web browser. If it all works correctly, you should see your data from the query (in this case for `GET`) in your web browser.

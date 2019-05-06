@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Embedding Vega-Lite</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.0-rc14"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.29.1"></script>
+  </head>
+  <body>
+    <div align="center">
+        <h1>Save and View an Employee Profile</h1>
+        <br> Size of Organization:
+        <input type="text" name="size" id="size">
+        <br> 
+        <br> Last Fiscal Year Revenue:
+        <input type="text" name="lastyrFRev" id="lyfRev">
+        <br> 
+        <br> Number of Organization Staff
+        <input type="text" name="orgstaff" id="orgstaff">
+        <br>
+        <br> Number of Destops per Full-time Employee
+        <input type="text" name="dt_per_fte" id="dt_per_fte">
+        <br>
+        <br> Last Fiscal Year IT Capital Budget
+        <input type="text" name="ly_it_cap_bud" id="ly_it_cap_bud">
+        <br>
+        <br> Last Fiscal Year Revenue
+        <input type="text" name="ly_rev" id="ly_rev">
+        <br>
+        <br> Last Year IT Operating Budget
+        <input type="text" name="ly_IT_op_bud" id="ly_IT_op_bud">
+        <br>
+        <br> Number of IT Staff
+        <input type="text" name="ITorgstaff" id="ITorgstaff">
+        <br>
+        <br> Number of Help Desk Staff
+        <input type="text" name="hd_orgstaff" id="hd_orgstaff">
+        <br>
+        <br> Total IT Spend per Employee
+        <input type="text" name="IT_spend_per_emp" id="IT_spend_per_emp">
+        <br>
+        <br> Number of IT Full-time Staff
+        <input type="text" name="IT_fte" id="IT_fte">
+        <br>
+        <br> Year
+        <input type="text" name="year" id="year">
+        <br>
+        <br>
+        <input type="submit" id="saveprofile" value="Save Profile">
+        <br>
+        <p id="profileSaved"></p>
+    </div>
+
+    <div id="vis"></div>
+      <input type="submit" id="makeVis0" value="Get Chart 1 visualization">
+      <input type="submit" id="makeVis1" value="Get Chart 2 visualization">
+      <input type="submit" id="makeVis2" value="Get Chart 3 visualization">
+      <input type="submit" id="makeVis3" value="Get Chart 4 visualization">
+      <input type="submit" id="makeVis4" value="Get Chart 5 visualization">
+      <input type="submit" id="makeVis5" value="Get Chart 6 visualization">
+      <input type="submit" id="makeVis6" value="Get Chart 7 visualization">
+      <input type="submit" id="makeVis7" value="Get Chart 8 visualization">
+      <input type="submit" id="makeVis8" value="Get Chart 9 visualization">
+      <input type="submit" id="makeVis9" value="Get Chart 10 visualization">
+      <input type="submit" id="makeVis10" value="Get Chart 11 visualization">
+      <input type="submit" id="makeVis11" value="Get Chart 12 visualization">
+      <a href="https://d734ofmb1h.execute-api.us-east-1.amazonaws.com/default/researchers">
+          <button>Researchers Click Me To Get Json Data</button>
+      </a>
+      <script>
+
+      //API points for each chart in the AWS API Gateway. DO NOT CHANGE THESE UNLESS NEEDED
+      var API_ENDPOINT_GET0 = "https://d734ofmb1h.execute-api.us-east-1.amazonaws.com/default/charts/rds-chart0"
+      var API_ENDPOINT_GET1 = "https://d734ofmb1h.execute-api.us-east-1.amazonaws.com/default/charts/rds-chart1"
+      var API_ENDPOINT_GET2 = "https://d734ofmb1h.execute-api.us-east-1.amazonaws.com/default/charts/rds-chart2"
+      var API_ENDPOINT_GET3 = "https://d734ofmb1h.execute-api.us-east-1.amazonaws.com/default/charts/rds-chart3"
+      var API_ENDPOINT_GET4 = "https://d734ofmb1h.execute-api.us-east-1.amazonaws.com/default/charts/rds-chart4"
+      var API_ENDPOINT_GET5 = "https://d734ofmb1h.execute-api.us-east-1.amazonaws.com/default/charts/rds-chart5"
+      var API_ENDPOINT_GET6 = "https://d734ofmb1h.execute-api.us-east-1.amazonaws.com/default/charts/rds-chart6"
+      var API_ENDPOINT_GET7 = "https://d734ofmb1h.execute-api.us-east-1.amazonaws.com/default/charts/rds-chart7"
+      var API_ENDPOINT_GET8 = "https://d734ofmb1h.execute-api.us-east-1.amazonaws.com/default/charts/rds-chart8"
+      var API_ENDPOINT_GET9 = "https://d734ofmb1h.execute-api.us-east-1.amazonaws.com/default/charts/rds-chart9"
+      var API_ENDPOINT_GET10 = "https://d734ofmb1h.execute-api.us-east-1.amazonaws.com/default/charts/rds-chart10"
+      var API_ENDPOINT_GET11 = "https://d734ofmb1h.execute-api.us-east-1.amazonaws.com/default/charts/rds-chart11"
+      var API_ENDPOINT_POST = "https://d734ofmb1h.execute-api.us-east-1.amazonaws.com/default/charts"
+
+      //AJAX POST REQUEST FOR SUBMITTING NEW DATA INTO THE DATABASE
+      document.getElementById("saveprofile").onclick = function(){
+        //TEMPLATE:
+        //  "<DATABASE_FIELD_NAME>":$('#<HTML_TAG>').val(),
+        var inputData = {
+          "size":$('#size').val(),
+          "organization_staff":$('#orgstaff').val(),
+          "last_fiscal_year_revenue":$('#lyfRev').val(),
+          "number_of_desktop_per_FTE":$('#dt_per_fte').val(),
+          "last_fiscal_year_IT_capital_budget":$('#ly_it_cap_bud').val(),
+          "last_fiscal_year_revenue":$('#ly_rev').val(),
+          "last_year_total_IT_operating_budget":$('#ly_IT_op_bud').val(),
+          "IT_organization_staff":$('#ITorgstaff').val(),
+          "help_desk_staff":$('#hd_orgstaff').val(),
+          "total_IT_spend_per_employee":$('#IT_spend_per_emp').val(),
+          "total_IT_staff_FTE":$('#IT_fte').val(),
+          "year":$('#year').val()
+            };
+        $.ajax({
+              url: API_ENDPOINT_POST,
+              type: 'POST',
+              data:  JSON.stringify(inputData)  ,
+              contentType: 'application/json; charset=utf-8',
+              success: function (response) {
+                document.getElementById("profileSaved").innerHTML = "Profile Saved!";
+              },
+              error: function () {
+                  alert("error");
+              }
+          });
+      }
+
+      //AJAX GET 0 REQUEST
+      document.getElementById("makeVis0").onclick = function(){  
+        $.ajax({
+              url: API_ENDPOINT_GET0,
+              type: 'GET',
+              contentType: 'application/json; charset=utf-8',
+              success: function (response) {
+                var Data = response;
+                var yourVlSpec = {
+                  $schema: 'https://vega.github.io/schema/vega-lite/v2.0.json',
+                  description: 'A simple bar chart with embedded data.',
+                  data: {
+                    values: Data
+                  },
+                  mark: 'bar',
+                  encoding: {
+                    x: {field: 'year', type: 'ordinal'},
+                    y: {field: 'organization_count', type: 'quantitative'}
+                  }
+                };
+                vegaEmbed('#vis', yourVlSpec);
+              },
+              error: function () {
+                  alert("error");
+              }
+          });
+      }
+
+      //AJAX GET 1 REQUEST
+      document.getElementById("makeVis1").onclick = function(){  
+        $.ajax({
+              url: API_ENDPOINT_GET1,
+              type: 'GET',
+              contentType: 'application/json; charset=utf-8',
+              success: function (response) {
+                var Data = response;
+                var yourVlSpec = {
+                  $schema: 'https://vega.github.io/schema/vega-lite/v2.0.json',
+                  description: 'A simple bar chart with embedded data.',
+                  data: {
+                    values: Data
+                  },
+                  mark: 'bar',
+                  encoding: {
+                    x: {field: 'year', type: 'ordinal'},
+                    y: {field: 'last_fiscal_year_revenue', type: 'quantitative'}
+                  }
+                };
+                vegaEmbed('#vis', yourVlSpec);
+              },
+              error: function () {
+                  alert("error");
+              }
+          });
+      }
+
+      //AJAX GET 2 REQUEST
+      document.getElementById("makeVis2").onclick = function(){  
+        $.ajax({
+              url: API_ENDPOINT_GET2,
+              type: 'GET',
+              contentType: 'application/json; charset=utf-8',
+              success: function (response) {
+                var Data = response;
+                var yourVlSpec = {
+                  $schema: 'https://vega.github.io/schema/vega-lite/v2.0.json',
+                  description: 'A simple bar chart with embedded data.',
+                  data: {
+                    values: Data
+                  },
+                  mark: 'bar',
+                  encoding: {
+                    x: {field: 'year', type: 'ordinal'},
+                    y: {field: 'last_year_total_IT_operating_budget', type: 'quantitative'}
+                  }
+                };
+                vegaEmbed('#vis', yourVlSpec);
+              },
+              error: function () {
+                  alert("error");
+              }
+          });
+      }
+
+      //AJAX GET 3 REQUEST
+      document.getElementById("makeVis3").onclick = function(){  
+        $.ajax({
+              url: API_ENDPOINT_GET6,
+              type: 'GET',
+              contentType: 'application/json; charset=utf-8',
+              success: function (response) {
+                var Data = response;
+                var yourVlSpec = {
+                  $schema: 'https://vega.github.io/schema/vega-lite/v2.0.json',
+                  description: 'A simple bar chart with embedded data.',
+                  data: {
+                    values: Data
+                  },
+                  mark: 'bar',
+                  encoding: {
+                    x: {field: 'year', type: 'ordinal'},
+                    y: {field: 'capital_IT_budget_as_percent_of_revenue', type: 'quantitative'}
+                  }
+                };
+                vegaEmbed('#vis', yourVlSpec);
+              },
+              error: function () {
+                  alert("error");
+              }
+          });
+      }
+
+      //AJAX GET 4 REQUEST
+      document.getElementById("makeVis4").onclick = function(){  
+        $.ajax({
+              url: API_ENDPOINT_GET4,
+              type: 'GET',
+              contentType: 'application/json; charset=utf-8',
+              success: function (response) {
+                var Data = response;
+                var yourVlSpec = {
+                  $schema: 'https://vega.github.io/schema/vega-lite/v2.0.json',
+                  description: 'A simple bar chart with embedded data.',
+                  data: {
+                    values: Data
+                  },
+                  mark: 'bar',
+                  encoding: {
+                    x: {field: 'year', type: 'ordinal'},
+                    y: {field: 'last_fiscal_year_IT_capital_budget', type: 'quantitative'}
+                  }
+                };
+                vegaEmbed('#vis', yourVlSpec);
+              },
+              error: function () {
+                  alert("error");
+              }
+          });
+      }
+
+      //AJAX GET 5 REQUEST
+      document.getElementById("makeVis5").onclick = function(){  
+        $.ajax({
+              url: API_ENDPOINT_GET5,
+              type: 'GET',
+              contentType: 'application/json; charset=utf-8',
+              success: function (response) {
+                var Data = response;
+                var yourVlSpec = {
+                  $schema: 'https://vega.github.io/schema/vega-lite/v2.0.json',
+                  description: 'A simple bar chart with embedded data.',
+                  data: {
+                    values: Data
+                  },
+                  mark: 'bar',
+                  encoding: {
+                    x: {field: 'year', type: 'ordinal'},
+                    y: {field: 'capital_IT_budget_as_percent_of_revenue', type: 'quantitative'}
+                  }
+                };
+                vegaEmbed('#vis', yourVlSpec);
+              },
+              error: function () {
+                  alert("error");
+              }
+          });
+      }
+
+      //AJAX GET 6 REQUEST    ######## FIX THIS ONE ##############
+      document.getElementById("makeVis6").onclick = function(){  
+        $.ajax({
+              url: API_ENDPOINT_GET6,
+              type: 'GET',
+              contentType: 'application/json; charset=utf-8',
+              success: function (response) {
+                var Data = response;
+                var yourVlSpec = {
+                  $schema: 'https://vega.github.io/schema/vega-lite/v2.0.json',
+                  description: 'A simple bar chart with embedded data.',
+                  data: {
+                    values: Data
+                  },
+                  mark: 'bar',
+                  encoding: {
+                    x: {field: 'year', type: 'ordinal'},
+                    y: {field: '', type: 'quantitative'}
+                  }
+                };
+                vegaEmbed('#vis', yourVlSpec);
+              },
+              error: function () {
+                  alert("error");
+              }
+          });
+      }
+
+      //AJAX GET 7 REQUEST
+      document.getElementById("makeVis7").onclick = function(){  
+        $.ajax({
+              url: API_ENDPOINT_GET7,
+              type: 'GET',
+              contentType: 'application/json; charset=utf-8',
+              success: function (response) {
+                var Data = response;
+                var yourVlSpec = {
+                  $schema: 'https://vega.github.io/schema/vega-lite/v2.0.json',
+                  description: 'A simple bar chart with embedded data.',
+                  data: {
+                    values: Data
+                  },
+                  mark: 'bar',
+                  encoding: {
+                    x: {field: 'year', type: 'ordinal'},
+                    y: {field: 'total_IT_spend_per_employee', type: 'quantitative'}
+                  }
+                };
+                vegaEmbed('#vis', yourVlSpec);
+              },
+              error: function () {
+                  alert("error");
+              }
+          });
+      }
+
+      //AJAX GET 8 REQUEST
+      document.getElementById("makeVis8").onclick = function(){  
+        $.ajax({
+              url: API_ENDPOINT_GET8,
+              type: 'GET',
+              contentType: 'application/json; charset=utf-8',
+              success: function (response) {
+                var Data = response;
+                var yourVlSpec = {
+                  $schema: 'https://vega.github.io/schema/vega-lite/v2.0.json',
+                  description: 'A simple bar chart with embedded data.',
+                  data: {
+                    values: Data
+                  },
+                  mark: 'bar',
+                  encoding: {
+                    x: {field: 'year', type: 'ordinal'},
+                    y: {field: 'staff_to_IT_staff_ratio', type: 'quantitative'}
+                  }
+                };
+                vegaEmbed('#vis', yourVlSpec);
+              },
+              error: function () {
+                  alert("error");
+              }
+          });
+      }
+
+      //AJAX GET 9 REQUEST   #Add the overlapping line chart to the send piece of the dataframe
+      document.getElementById("makeVis9").onclick = function(){  
+        $.ajax({
+              url: API_ENDPOINT_GET9,
+              type: 'GET',
+              contentType: 'application/json; charset=utf-8',
+              success: function (response) {
+                var Data = response;
+                var yourVlSpec = {
+                  $schema: 'https://vega.github.io/schema/vega-lite/v2.0.json',
+                  description: 'A simple bar chart with embedded data.',
+                  data: {
+                    values: Data
+                  },
+                  mark: 'bar',
+                  encoding: {
+                    x: {field: 'year', type: 'ordinal'},
+                    y: {field: 'organization_staff', type: 'quantitative'}
+                  }
+                };
+                vegaEmbed('#vis', yourVlSpec);
+              },
+              error: function () {
+                  alert("error");
+              }
+          });
+      }
+
+      //AJAX GET 10 REQUEST  #Add the overlapping line chart to the send piece of the dataframe
+      document.getElementById("makeVis10").onclick = function(){  
+        $.ajax({
+              url: API_ENDPOINT_GET10,
+              type: 'GET',
+              contentType: 'application/json; charset=utf-8',
+              success: function (response) {
+                var Data = response;
+                var yourVlSpec = {
+                  $schema: 'https://vega.github.io/schema/vega-lite/v2.0.json',
+                  description: 'A simple bar chart with embedded data.',
+                  data: {
+                    values: Data
+                  },
+                  mark: 'bar',
+                  encoding: {
+                    x: {field: 'year', type: 'ordinal'},
+                    y: {field: 'last_year_total_IT_operating_budget', type: 'quantitative'}
+                  }
+                };
+                vegaEmbed('#vis', yourVlSpec);
+              },
+              error: function () {
+                  alert("error");
+              }
+          });
+      }
+
+      //AJAX GET 11 REQUEST
+      document.getElementById("makeVis11").onclick = function(){  
+        $.ajax({
+              url: API_ENDPOINT_GET11,
+              type: 'GET',
+              contentType: 'application/json; charset=utf-8',
+              success: function (response) {
+                var Data = response;
+                var yourVlSpec = {
+                  $schema: 'https://vega.github.io/schema/vega-lite/v2.0.json',
+                  description: 'A simple bar chart with embedded data.',
+                  data: {
+                    values: Data
+                  },
+                  mark: 'bar',
+                  encoding: {
+                    x: {field: 'year', type: 'ordinal'},
+                    y: {field: 'total_IT_spend_per_employee', type: 'quantitative'}
+                  }
+                };
+                vegaEmbed('#vis', yourVlSpec);
+              },
+              error: function () {
+                  alert("error");
+              }
+          });
+      }
+
+      </script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script>
+  </body>
+</html>
